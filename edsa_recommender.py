@@ -27,7 +27,7 @@
 """
 # Streamlit dependencies
 import streamlit as st
-
+st.set_page_config(page_title="Movie Recommender", page_icon="🎬")
 
 # Data handling dependencies
 import pandas as pd
@@ -69,7 +69,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.set_page_config(page_title="Movie Recommender", page_icon="🎬")
+
 
 # App declaration
 def main():
