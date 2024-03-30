@@ -9,11 +9,6 @@ from recommenders.content_based import content_model
 
 # Data Loading
 title_list = load_movie_titles('resources/data/movies.csv')
-# Load IMDb data
-imdb_data = pd.read_csv('resources/data/imdb_data.csv')
-
-# Merge movie and IMDb data on movieId
-merged_data = pd.merge(title_list, imdb_data, on='movieId')
 
 # Set theme colors
 primary_color = '#3498db'  # Blue color
@@ -109,7 +104,7 @@ def main():
         st.title("Search Movies")
         search_query = st.text_input("Enter the title of the movie you want to search:")
         if search_query:
-            search_results = merged_data[merged_data['title'].str.lower().str.contains(search_query.lower())]
+            search_results = title_list[title_list['title'].str.lower().str.contains(search_query.lower())]
             if not search_results.empty:
                 st.write("Search Results:")
                 st.table(search_results[['title', 'genres', 'release_date', 'actors', 'duration']])
