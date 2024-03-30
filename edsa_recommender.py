@@ -28,6 +28,7 @@
 # Streamlit dependencies
 import streamlit as st
 
+
 # Data handling dependencies
 import pandas as pd
 import numpy as np
@@ -68,10 +69,11 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+st.set_page_config(page_title="Movie Recommender", page_icon="🎬")
 
 # App declaration
 def main():
-    st.set_page_config(page_title="Movie Recommender", page_icon="🎬")
+
 
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
