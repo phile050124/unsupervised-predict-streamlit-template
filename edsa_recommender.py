@@ -1,8 +1,6 @@
-# Streamlit dependencies
 import streamlit as st
-
-# Data handling dependencies
 import pandas as pd
+
 
 # Custom Libraries
 from utils.data_loader import load_movie_titles
@@ -11,86 +9,98 @@ from recommenders.content_based import content_model
 
 # Data Loading
 title_list = load_movie_titles('resources/data/movies.csv')
+# Load IMDb data
+imdb_data = pd.read_csv('resources/data/imdb_data.csv')
+
+# Merge movie and IMDb data on movieId
+merged_data = pd.merge(title_list, imdb_data, on='movieId')
 
 # Set theme colors
 primary_color = '#3498db'  # Blue color
 secondary_color = '#ffffff'  # White color
 bg_color = '#f0f6fc'  # Light blue color for background
 
-# App declaration
+# Set the background color for the menu list to "mad red"
+st.markdown(
+    """
+    <style>
+        .sidebar .sidebar-content {
+            background-color: #ff0000; /* Mad red color */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Set the background color for the app to "dark blue"
+st.markdown(
+    """
+    <style>
+        .reportview-container {
+            background-color: #00008B; /* Dark blue color */
+            color: white; /* Text color */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Streamlit app declaration
 def main():
     st.set_page_config(page_title="Movie Recommender", page_icon="🎬")
 
-    # Session state to persist user authentication status
-    class SessionState:
-        def __init__(self):
-            self.logged_in = False
-
-    session_state = SessionState()
-
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
-    page_options = ["Recommender System", "Search Movies", "Top Charts", "User Profile", "About App", "About Owners"]
-
-    # Set page background color
-    st.markdown(f"""
-        <style>
-            .reportview-container .main .block-container{{
-                background: {bg_color};
-            }}
-        </style>
-    """, unsafe_allow_html=True)
+    page_options = ["Recommender System", "Search Movies", "Top Charts", "User Profile"]
 
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
     # -------------------------------------------------------------------
     page_selection = st.sidebar.selectbox("Choose Option", page_options)
     if page_selection == "Recommender System":
-        if session_state.logged_in:
-            # Header contents
-            st.write('# Movie Recommender Engine')
-            st.write('### EXPLORE Data Science Academy Unsupervised Predict')
-            st.image('resources/imgs/Image_header.png', use_column_width=True)
-            # Recommender System algorithm selection
-            sys = st.radio("Select an algorithm",
-                           ('Content Based Filtering',
-                            'Collaborative Based Filtering'))
+        # Header contents
+        st.write('# Movie Recommender Engine')
+        st.write('### EXPLORE Data Science Academy Unsupervised Predict')
+        st.image('resources/imgs/Image_header.png',use_column_width=True)
+        # Recommender System algorithm selection
+        sys = st.radio("Select an algorithm",
+                       ('Content Based Filtering',
+                        'Collaborative Based Filtering'))
 
-            # User-based preferences
-            st.write('### Enter Your Three Favorite Movies')
-            movie_1 = st.selectbox('First Option', title_list[14930:15200])
-            movie_2 = st.selectbox('Second Option', title_list[25055:25255])
-            movie_3 = st.selectbox('Third Option', title_list[21100:21200])
-            fav_movies = [movie_1, movie_2, movie_3]
+        # User-based preferences
+        st.write('### Enter Your Three Favorite Movies')
+        movie_1 = st.selectbox('First Option',title_list[14930:15200])
+        movie_2 = st.selectbox('Second Option',title_list[25055:25255])
+        movie_3 = st.selectbox('Third Option',title_list[21100:21200])
+        fav_movies = [movie_1,movie_2,movie_3]
 
-            # Perform top-10 movie recommendation generation
-            if sys == 'Content Based Filtering':
-                if st.button("Recommend", key="content_based"):
-                    try:
-                        with st.spinner('Crunching the numbers...'):
-                            top_recommendations = content_model(movie_list=fav_movies,
-                                                                top_n=10)
-                        st.title("We think you'll like:")
-                        for i, j in enumerate(top_recommendations):
-                            st.subheader(str(i + 1) + '. ' + j)
-                    except:
-                        st.error("Oops! Looks like this algorithm doesn't work. \
-                                      We'll need to fix it!")
+        # Perform top-10 movie recommendation generation
+        if sys == 'Content Based Filtering':
+            if st.button("Recommend", key="content_based"):
+                try:
+                    with st.spinner('Crunching the numbers...'):
+                        top_recommendations = content_model(movie_list=fav_movies,
+                                                            top_n=10)
+                    st.title("We think you'll like:")
+                    for i,j in enumerate(top_recommendations):
+                        st.subheader(str(i+1)+'. '+j)
+                except:
+                    st.error("Oops! Looks like this algorithm doesn't work. \
+                              We'll need to fix it!")
 
-            if sys == 'Collaborative Based Filtering':
-                if st.button("Recommend", key="collaborative_based"):
-                    try:
-                        with st.spinner('Crunching the numbers...'):
-                            top_recommendations = collab_model(movie_list=fav_movies,
-                                                               top_n=10)
-                        st.title("We think you'll like:")
-                        for i, j in enumerate(top_recommendations):
-                            st.subheader(str(i + 1) + '. ' + j)
-                    except:
-                        st.error("Oops! Looks like this algorithm doesn't work. \
-                                      We'll need to fix it!")
-        else:
-            st.write("Please log in to access this feature.")
+
+        if sys == 'Collaborative Based Filtering':
+            if st.button("Recommend", key="collaborative_based"):
+                try:
+                    with st.spinner('Crunching the numbers...'):
+                        top_recommendations = collab_model(movie_list=fav_movies,
+                                                           top_n=10)
+                    st.title("We think you'll like:")
+                    for i,j in enumerate(top_recommendations):
+                        st.subheader(str(i+1)+'. '+j)
+                except:
+                    st.error("Oops! Looks like this algorithm doesn't work. \
+                              We'll need to fix it!")
 
     # -------------------------------------------------------------------
 
@@ -99,11 +109,10 @@ def main():
         st.title("Search Movies")
         search_query = st.text_input("Enter the title of the movie you want to search:")
         if search_query:
-            search_results = [title for title in title_list if search_query.lower() in title.lower()]
-            if search_results:
+            search_results = merged_data[merged_data['title'].str.lower().str.contains(search_query.lower())]
+            if not search_results.empty:
                 st.write("Search Results:")
-                for result in search_results:
-                    st.write(result)
+                st.table(search_results[['title', 'genres', 'release_date', 'actors', 'duration']])
             else:
                 st.write("No matching movies found.")
 
@@ -153,30 +162,6 @@ def main():
             st.write("Preferred Genre: Action")
             st.write("Favorite Actor: Tom Hanks")
             st.write("Favorite Director: Christopher Nolan")
-
-            # Rating and feedback system
-            st.subheader("Rate and Provide Feedback for Movies:")
-            selected_movie = st.selectbox("Select a Movie:", title_list)
-            rating = st.slider("Rating (1-5)", 1, 5)
-            feedback = st.text_area("Feedback")
-
-            if st.button("Submit"):
-                # Placeholder for saving rating and feedback to database
-                st.success(f"Thank you for rating '{selected_movie}' with {rating} stars and providing feedback:\n{feedback}")
-
-    elif page_selection == "About App":
-        st.title("About the App")
-        st.write("""
-        This app is designed to provide personalized movie recommendations based on user preferences and movie ratings.
-        Users can log in, rate movies, and receive tailored recommendations to enhance their movie-watching experience.
-        """)
-
-    elif page_selection == "About Owners":
-        st.title("About the Owners")
-        st.write("""
-        This app is developed by Explore Data Science Academy as part of the Unsupervised Learning Predict project.
-        For more information about the owners and their projects, visit [Explore Data Science Academy](https://explore-datascience.net/).
-        """)
 
     # You may want to add more sections here for aspects such as an EDA,
     # or to provide your business pitch.
