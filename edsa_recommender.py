@@ -73,13 +73,6 @@ st.markdown(
 def main():
     st.set_page_config(page_title="Movie Recommender", page_icon="🎬")
 
-    # Session state to persist user authentication status
-    class SessionState:
-        def __init__(self):
-            self.logged_in = False
-
-    session_state = SessionState()
-
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
     page_options = ["Recommender System", "Search Movies", "Top Charts", "User Profile", "About App", "About Owners"]
