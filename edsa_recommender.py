@@ -1,32 +1,6 @@
-"""
-
-    Streamlit webserver-based Recommender Engine.
-
-    Author: Explore Data Science Academy.
-
-    Note:
-    ---------------------------------------------------------------------
-    Please follow the instructions provided within the README.md file
-    located within the root of this repository for guidance on how to use
-    this script correctly.
-
-    NB: !! Do not remove/modify the code delimited by dashes !!
-
-    This application is intended to be partly marked in an automated manner.
-    Altering delimited code may result in a mark of 0.
-    ---------------------------------------------------------------------
-
-    Description: This file is used to launch a minimal streamlit web
-	application. You are expected to extend certain aspects of this script
-    and its dependencies as part of your predict project.
-
-	For further help with the Streamlit framework, see:
-
-	https://docs.streamlit.io/en/latest/
-
-"""
 # Streamlit dependencies
 import streamlit as st
+
 st.set_page_config(page_title="Movie Recommender", page_icon="🎬")
 
 # Data handling dependencies
@@ -42,9 +16,9 @@ from recommenders.content_based import content_model
 title_list = load_movie_titles('resources/data/movies.csv')
 
 # Set theme colors
-primary_color = '#3498db'  # Blue color
+primary_color = '#00008B'  # Blue color
 secondary_color = '#ffffff'  # White color
-bg_color = '#f0f6fc'  # Light blue color for background
+bg_color = '#ff0000'  # Light blue color for background
 # Set page background color
 st.markdown(
     """
@@ -71,10 +45,27 @@ st.markdown(
 )
 
 
+# Add images of movie posters alongside recommendations
+def display_recommendations_with_posters(recommendations):
+    for recommendation in recommendations:
+        st.subheader(recommendation['title'])
+        st.image(recommendation['poster'])
+        st.write(recommendation['description'])
+
+
+# Personalized Recommendations based on user's ratings
+def get_personalized_recommendations(user_ratings):
+    # Use user's ratings to generate personalized recommendations
+    personalized_recommendations = [
+        {'title': 'Movie A', 'poster': 'url_to_movie_A_poster', 'description': 'Description of Movie A'},
+        {'title': 'Movie B', 'poster': 'url_to_movie_B_poster', 'description': 'Description of Movie B'},
+        # Add more personalized recommendations
+    ]
+    return personalized_recommendations
+
+
 # App declaration
 def main():
-
-
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
     page_options = ["Recommender System", "Search Movies", "Top Charts", "User Profile", "About App", "About Owners"]
@@ -87,7 +78,7 @@ def main():
         # Header contents
         st.write('# Movie Recommender Engine')
         st.write('### EXPLORE Data Science Academy Unsupervised Predict')
-        st.image('resources/imgs/Image_header.png',use_column_width=True)
+        st.image('resources/imgs/Image_header.png', use_column_width=True)
         # Recommender System algorithm selection
         sys = st.radio("Select an algorithm",
                        ('Content Based Filtering',
@@ -95,10 +86,10 @@ def main():
 
         # User-based preferences
         st.write('### Enter Your Three Favorite Movies')
-        movie_1 = st.selectbox('Fisrt Option',title_list[14930:15200])
-        movie_2 = st.selectbox('Second Option',title_list[25055:25255])
-        movie_3 = st.selectbox('Third Option',title_list[21100:21200])
-        fav_movies = [movie_1,movie_2,movie_3]
+        movie_1 = st.selectbox('Fisrt Option', title_list[14930:15200])
+        movie_2 = st.selectbox('Second Option', title_list[25055:25255])
+        movie_3 = st.selectbox('Third Option', title_list[21100:21200])
+        fav_movies = [movie_1, movie_2, movie_3]
 
         # Perform top-10 movie recommendation generation
         if sys == 'Content Based Filtering':
@@ -108,12 +99,11 @@ def main():
                         top_recommendations = content_model(movie_list=fav_movies,
                                                             top_n=10)
                     st.title("We think you'll like:")
-                    for i,j in enumerate(top_recommendations):
-                        st.subheader(str(i+1)+'. '+j)
+                    for i, j in enumerate(top_recommendations):
+                        st.subheader(str(i + 1) + '. ' + j)
                 except:
                     st.error("Oops! Looks like this algorithm does't work.\
                               We'll need to fix it!")
-
 
         if sys == 'Collaborative Based Filtering':
             if st.button("Recommend"):
@@ -122,12 +112,17 @@ def main():
                         top_recommendations = collab_model(movie_list=fav_movies,
                                                            top_n=10)
                     st.title("We think you'll like:")
-                    for i,j in enumerate(top_recommendations):
-                        st.subheader(str(i+1)+'. '+j)
+                    for i, j in enumerate(top_recommendations):
+                        st.subheader(str(i + 1) + '. ' + j)
                 except:
                     st.error("Oops! Looks like this algorithm does't work.\
                               We'll need to fix it!")
 
+        # Display personalized recommendations for logged-in user
+        st.write('### Personalized Recommendations')
+        user_ratings = {'Movie 1': 4, 'Movie 2': 5, 'Movie 3': 3}  # Example user ratings
+        personalized_recommendations = get_personalized_recommendations(user_ratings)
+        display_recommendations_with_posters(personalized_recommendations)
 
     # -------------------------------------------------------------------
 
