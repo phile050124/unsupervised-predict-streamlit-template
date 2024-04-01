@@ -14,55 +14,48 @@ from recommenders.content_based import content_model
 
 # Data Loading
 title_list = load_movie_titles('resources/data/movies.csv')
+sidebar_style = """
+    <style>
+        .sidebar .sidebar-content {
+            background-color: #343a40 !important; /* Dark background */
+            color: white !important; /* Text color */
+        }
+        .sidebar .sidebar-content .sidebar-section-content button {
+            background-color: #007bff !important; /* Blue button background */
+            color: white !important; /* Button text color */
+            border: none !important; /* Remove button border */
+            margin-bottom: 10px !important; /* Add margin between buttons */
+        }
+        .sidebar .sidebar-content .sidebar-section-content button:hover {
+            background-color: #0056b3 !important; /* Darker blue on hover */
+        }
+    </style>
+"""
+# Inject custom CSS into Streamlit
+st.markdown(sidebar_style, unsafe_allow_html=True)
+
+# Add widgets to the sidebar with blue buttons
+with st.sidebar:
+    st.title("Sidebar Title")
+    # Add buttons with blue background
+    if st.button("Recommender System"):
+        st.write("Recommender System selected!")
+    if st.button("Search Movies "):
+        st.write("Search Movies selected!")
+    if st.button("Top Charts "):
+        st.write("Top Charts selected!")
+    if st.button("User Profile"):
+        st.write("User Profile selected!")
+    if st.button("About App"):
+        st.write("About App selected!")
+    if st.button("About Owners"):
+        st.write("About Owners selected!")
 
 # Set theme colors
 primary_color = '#00008B'  # Blue color
 secondary_color = '#ffffff'  # White color
 bg_color = '#ff0000'  # Light blue color for background
 # Set page background color
-st.markdown(
-    """
-    <style>
-        .sidebar .sidebar-content {
-            background-color: #00008B; /* Dark blue color */
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# Set the background color for the app to "mad red"
-st.markdown(
-    """
-    <style>
-        .reportview-container {
-            background-color: #ff0000; /* Mad red color */
-            color: white; /* Text color */
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-
-# Add images of movie posters alongside recommendations
-def display_recommendations_with_posters(recommendations):
-    for recommendation in recommendations:
-        st.subheader(recommendation['title'])
-        st.image(recommendation['poster'])
-        st.write(recommendation['description'])
-
-
-# Personalized Recommendations based on user's ratings
-def get_personalized_recommendations(user_ratings):
-    # Use user's ratings to generate personalized recommendations
-    personalized_recommendations = [
-        {'title': 'Movie A', 'poster': 'url_to_movie_A_poster', 'description': 'Description of Movie A'},
-        {'title': 'Movie B', 'poster': 'url_to_movie_B_poster', 'description': 'Description of Movie B'},
-        # Add more personalized recommendations
-    ]
-    return personalized_recommendations
-
 
 # App declaration
 def main():
@@ -216,6 +209,27 @@ def main():
             This app is developed by Explore Data Science Academy as part of the Unsupervised Learning Predict project.
             For more information about the owners and their projects, visit [Explore Data Science Academy](https://explore-datascience.net/).
             """)
+
+        # Define owners' information
+        owners_info = [
+            {"name": "Zinhle Mjwara", "role": "Role 1", "image_url": "url_to_image1.jpg"},
+            {"name": "Nkosingiphile Sefodi", "role": "Role 2", "image_url": "resources/imgs/butcher.jpg"},
+            {"name": "Jean Rabothata", "role": "Role 3", "image_url": "url_to_image3.jpg"},
+            {"name": "Anele ", "role": "Role 4", "image_url": "url_to_image4.jpg"},
+            {"name": "Thabang Ntuli", "role": "Role 5", "image_url": "url_to_image5.jpg"},
+            {"name": "Nompumeza", "role": "Role 6", "image_url": "url_to_image6.jpg"}
+        ]
+
+        # Create columns layout for displaying images and text
+        col_count = 3  # Number of columns
+        cols = st.columns(col_count)
+
+        for i, owner_info in enumerate(owners_info):
+            with cols[i % col_count]:
+                st.image(owner_info["image_url"], use_column_width=True)
+                st.write(owner_info["name"])
+                st.write(owner_info["role"])
+
 
 
 if __name__ == '__main__':

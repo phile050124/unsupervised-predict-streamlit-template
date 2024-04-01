@@ -33,80 +33,196 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
+import streamlit as st
 
+st.set_page_config(page_title="Movie Recommender", page_icon="🎬")
 # Importing data
-movies = pd.read_csv('resources/data/movies.csv', sep = ',')
-ratings = pd.read_csv('resources/data/ratings.csv')
-movies.dropna(inplace=True)
 
-def data_preprocessing(subset_size):
-    """Prepare data for use within Content filtering algorithm.
+sidebar_style = """
+    <style>
+        .sidebar .sidebar-content {
+            background-color: #343a40 !important; /* Dark background */
+            color: white !important; /* Text color */
+        }
+        .sidebar .sidebar-content .sidebar-section-content button {
+            background-color: #007bff !important; /* Blue button background */
+            color: white !important; /* Button text color */
+            border: none !important; /* Remove button border */
+            margin-bottom: 10px !important; /* Add margin between buttons */
+        }
+        .sidebar .sidebar-content .sidebar-section-content button:hover {
+            background-color: #0056b3 !important; /* Darker blue on hover */
+        }
+    </style>
+"""
+# Inject custom CSS into Streamlit
+st.markdown(sidebar_style, unsafe_allow_html=True)
 
-    Parameters
-    ----------
-    subset_size : int
-        Number of movies to use within the algorithm.
+# Add widgets to the sidebar with blue buttons
+with st.sidebar:
+    st.title("Sidebar Title")
+    # Add buttons with blue background
+    if st.button("Recommender System"):
+        st.write("Recommender System selected!")
+    if st.button("Search Movies "):
+        st.write("Search Movies selected!")
+    if st.button("Top Charts "):
+        st.write("Top Charts selected!")
+    if st.button("User Profile"):
+        st.write("User Profile selected!")
+    if st.button("About App"):
+        st.write("About App selected!")
+    if st.button("About Owners"):
+        st.write("About Owners selected!")
 
-    Returns
-    -------
-    Pandas Dataframe
-        Subset of movies selected for content-based filtering.
 
-    """
-    # Split genre data into individual words.
-    movies['keyWords'] = movies['genres'].str.replace('|', ' ')
-    # Subset of the data
-    movies_subset = movies[:subset_size]
-    return movies_subset
+# Custom Libraries
+from utils.data_loader import load_movie_titles
+from collaborative_based import collab_model
+from content_based import content_model
 
-# !! DO NOT CHANGE THIS FUNCTION SIGNATURE !!
-# You are, however, encouraged to change its content.  
-def content_model(movie_list,top_n=10):
-    """Performs Content filtering based upon a list of movies supplied
-       by the app user.
+title_list = load_movie_titles('movies.csv')
 
-    Parameters
-    ----------
-    movie_list : list (str)
-        Favorite movies chosen by the app user.
-    top_n : type
-        Number of top recommendations to return to the user.
+def main():
+    # DO NOT REMOVE the 'Recommender System' option below, however,
+    # you are welcome to add more options to enrich your app.
+    page_options = ["Recommender System", "Search Movies", "Top Charts", "User Profile", "About App", "About Owners"]
 
-    Returns
-    -------
-    list (str)
-        Titles of the top-n movie recommendations to the user.
+    # -------------------------------------------------------------------
+    # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
+    # -------------------------------------------------------------------
+    page_selection = st.sidebar.selectbox("Choose Option", page_options)
+    if page_selection == "Recommender System":
+        # Header contents
+        st.write('# Movie Recommender Engine')
+        st.write('### EXPLORE Data Science Academy Unsupervised Predict')
+        st.image('resources/imgs/Image_header.png', use_column_width=True)
+        # Recommender System algorithm selection
+        sys = st.radio("Select an algorithm",
+                       ('Content Based Filtering',
+                        'Collaborative Based Filtering'))
 
-    """
-    # Initializing the empty list of recommended movies
-    recommended_movies = []
-    data = data_preprocessing(27000)
-    # Instantiating and generating the count matrix
-    count_vec = CountVectorizer()
-    count_matrix = count_vec.fit_transform(data['keyWords'])
-    indices = pd.Series(data['title'])
-    cosine_sim = cosine_similarity(count_matrix, count_matrix)
-    # Getting the index of the movie that matches the title
-    idx_1 = indices[indices == movie_list[0]].index[0]
-    idx_2 = indices[indices == movie_list[1]].index[0]
-    idx_3 = indices[indices == movie_list[2]].index[0]
-    # Creating a Series with the similarity scores in descending order
-    rank_1 = cosine_sim[idx_1]
-    rank_2 = cosine_sim[idx_2]
-    rank_3 = cosine_sim[idx_3]
-    # Calculating the scores
-    score_series_1 = pd.Series(rank_1).sort_values(ascending = False)
-    score_series_2 = pd.Series(rank_2).sort_values(ascending = False)
-    score_series_3 = pd.Series(rank_3).sort_values(ascending = False)
-    # Getting the indexes of the 10 most similar movies
-    listings = score_series_1.append(score_series_1).append(score_series_3).sort_values(ascending = False)
+        # User-based preferences
+        st.write('### Enter Your Three Favorite Movies')
+        movie_1 = st.selectbox('Fisrt Option', title_list[14930:15200])
+        movie_2 = st.selectbox('Second Option', title_list[25055:25255])
+        movie_3 = st.selectbox('Third Option', title_list[21100:21200])
+        fav_movies = [movie_1, movie_2, movie_3]
 
-    # Store movie names
-    recommended_movies = []
-    # Appending the names of movies
-    top_50_indexes = list(listings.iloc[1:50].index)
-    # Removing chosen movies
-    top_indexes = np.setdiff1d(top_50_indexes,[idx_1,idx_2,idx_3])
-    for i in top_indexes[:top_n]:
-        recommended_movies.append(list(movies['title'])[i])
-    return recommended_movies
+        # Perform top-10 movie recommendation generation
+        if sys == 'Content Based Filtering':
+            if st.button("Recommend"):
+                try:
+                    with st.spinner('Crunching the numbers...'):
+                        top_recommendations = content_model(movie_list=fav_movies,
+                                                            top_n=10)
+                    st.title("We think you'll like:")
+                    for i, j in enumerate(top_recommendations):
+                        st.subheader(str(i + 1) + '. ' + j)
+                except:
+                    st.error("Oops! Looks like this algorithm does't work.\
+                              We'll need to fix it!")
+
+        if sys == 'Collaborative Based Filtering':
+            if st.button("Recommend"):
+                try:
+                    with st.spinner('Crunching the numbers...'):
+                        top_recommendations = collab_model(movie_list=fav_movies,
+                                                           top_n=10)
+                    st.title("We think you'll like:")
+                    for i, j in enumerate(top_recommendations):
+                        st.subheader(str(i + 1) + '. ' + j)
+                except:
+                    st.error("Oops! Looks like this algorithm does't work.\
+                              We'll need to fix it!")
+
+    # -------------------------------------------------------------------
+
+    # ------------- SAFE FOR ALTERING/EXTENSION -------------------
+    if page_selection == "Solution Overview":
+        st.title("Solution Overview")
+        st.write("Describe your winning approach on this page")
+
+    # You may want to add more sections here for aspects such as an EDA,
+    # or to provide your business pitch.
+    elif page_selection == "Search Movies":
+        st.title("Search Movies")
+        search_query = st.text_input("Enter the title of the movie you want to search:")
+        if search_query:
+            search_results = [title for title in title_list if search_query.lower() in title.lower()]
+            if search_results:
+                st.write("Search Results:")
+                for result in search_results:
+                    st.write(result)
+            else:
+                st.write("No matching movies found.")
+
+    elif page_selection == "Top Charts":
+        st.title("Top Charts")
+        # Load movie ratings data
+        ratings_df = pd.read_csv('resources/data/ratings.csv')
+        # Calculate average rating for each movie
+        avg_ratings = ratings_df.groupby('movieId')['rating'].mean()
+        # Sort movies based on average rating
+        top_movies = avg_ratings.sort_values(ascending=False).head(10)
+        st.write("Top 10 Rated Movies:")
+        for movie_id, rating in top_movies.items():
+            movie_title = title_list[movie_id]
+            st.write(f"{movie_title}: {rating:.2f}")
+
+    elif page_selection == "User Profile":
+        st.title("User Profile")
+        st.sidebar.title("User Profile Management")
+
+        # Sidebar menu for profile management
+        profile_options = ["View Profile", "Edit Profile", "Preferences"]
+        selected_option = st.sidebar.radio("Select Option", profile_options)
+
+        if selected_option == "View Profile":
+            st.write("View Profile:")
+            # Placeholder for viewing user profile
+            st.write("Name: John Doe")
+            st.write("Email: john@example.com")
+            st.write("Age: 30")
+            st.write("Gender: Male")
+
+        elif selected_option == "Edit Profile":
+            st.write("Edit Profile:")
+            # Placeholder for editing user profile
+            name = st.text_input("Name", "John Doe")
+            email = st.text_input("Email", "john@example.com")
+            age = st.number_input("Age", min_value=18, max_value=100, value=30)
+            gender = st.radio("Gender", ["Male", "Female"])
+            if st.button("Update Profile"):
+                # Placeholder for updating user profile in database
+                st.success("Profile updated successfully!")
+
+        elif selected_option == "Preferences":
+            st.write("Preferences:")
+            # Placeholder for managing user preferences
+            st.write("Preferred Genre: Action")
+            st.write("Favorite Actor: Tom Hanks")
+            st.write("Favorite Director: Christopher Nolan")
+
+            # Rating and feedback system
+
+
+
+
+    elif page_selection == "About App":
+        st.title("About the App")
+        st.write("""
+            This app is designed to provide personalized movie recommendations based on user preferences and movie ratings.
+            Users can log in, rate movies, and receive tailored recommendations to enhance their movie-watching experience.
+            """)
+
+    elif page_selection == "About Owners":
+        st.title("About the Owners")
+        st.write("""
+            This app is developed by Explore Data Science Academy as part of the Unsupervised Learning Predict project.
+            For more information about the owners and their projects, visit [Explore Data Science Academy](https://explore-datascience.net/).
+            """)
+
+
+if __name__ == '__main__':
+    main()
