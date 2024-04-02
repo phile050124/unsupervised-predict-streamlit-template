@@ -34,22 +34,6 @@ sidebar_style = """
 # Inject custom CSS into Streamlit
 st.markdown(sidebar_style, unsafe_allow_html=True)
 
-# Add widgets to the sidebar with blue buttons
-with st.sidebar:
-    st.title("Sidebar Title")
-    # Add buttons with blue background
-    if st.button("Recommender System"):
-        st.experimental_set_query_params(page="Recommender System")
-    if st.button("Search Movies"):
-        st.experimental_set_query_params(page="Search Movies")
-    if st.button("Top Charts"):
-        st.experimental_set_query_params(page="Top Charts")
-    if st.button("User Profile"):
-        st.experimental_set_query_params(page="User Profile")
-    if st.button("About App"):
-        st.experimental_set_query_params(page="About App")
-    if st.button("About Owners"):
-        st.experimental_set_query_params(page="About Owners")
 
 # Set theme colors
 primary_color = '#00008B'  # Blue color
