@@ -74,7 +74,7 @@ def main():
     # you are welcome to add more options to enrich your app.
     page_options = ["Recommender System", "Visualisations","Data Information", "Solution Overview", "About Us!"]
     
-    st.sidebar.image("images/Astro_Coders1.png", use_column_width=True)
+    st.sidebar.image("resources/imgs/Astro_Coders1.png", use_column_width=True)
 
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
@@ -146,7 +146,7 @@ def main():
         st.subheader("Content Based Filtering VS Collaborative Filtering")
         st.write("There are primarily two methods for developing a recommender system. We experimented with both collaborative filtering and content-based filtering to see which approach would produce the greatest results for our system.")
         
-        st.image("images/contentVScollab2.png")
+        st.image("resources/imgs/contentVScollab2.png")
 
         st.info("##### Content-based Filtering")
         st.write("""Content-based filtering uses item features to recommend other items similar to what the user likes, based on their previous actions or explicit feedback. 
@@ -186,7 +186,7 @@ def main():
         st.write("---")
 
         st.write("##### Bar graph showing Most popular tags")
-        st.image("images/Tags.png")
+        st.image("resources/imgs/Tags.png")
         st.write("""
 		#### Quick overview of the data above:
 * There is a strong imbalance amongst the tags found on the dataset.
@@ -198,7 +198,7 @@ def main():
         st.write("---")
 
         st.write("##### Bar graph showing Top Rated Movies")
-        st.image("images/TopMovies.png")
+        st.image("resources/imgs/TopMovies.png")
         st.write("""
 		#### Quick overview of the data above:
 Here we see the highest rated movies are older moves, some from the 90s and 2000s.Special events could be had around these kind of movies like a “Star wars theme” week where we promote movies that are similar to star wars or theme the user interface like star wars or whatever the top rated movie for a certain user is. This could have a positive impact on the service’s brand loyalty
@@ -235,8 +235,8 @@ Here we can talk about the fact that most of the ratings fall on the positive si
         source = st.checkbox("Data Source")
         if source:
             st.write("### Where did we get the data from?")
-            logo = Image.open("images/IMBD.png")
-            st.image("images/IMBD.png", use_column_width=True)
+            logo = Image.open("resources/imgs/IMBD.png")
+            st.image("resources/imgs/IMBD.png", use_column_width=True)
             st.write('''The data for the MovieLens dataset is maintained by the GroupLens research group in the Department of Computer Science and Engineering 
             at the University of Minnesota. Additional movie content data was legally scraped from IMDB''')
             st.write("---")
