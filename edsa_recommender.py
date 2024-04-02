@@ -207,12 +207,12 @@ def main():
 
         # Define owners' information
         owners_info = [
-            {"name": "Zinhle Mjwara", "role": "Role 1", "image_url": "url_to_image1.jpg"},
+            {"name": "Zinhle Mjwara", "role": "Role 1", "image_url": "resources/imgs/download.jpeg"},
             {"name": "Nkosingiphile Sefodi", "role": "Role 2", "image_url": "resources/imgs/butcher.jpg"},
-            {"name": "Jean Rabothata", "role": "Role 3", "image_url": "url_to_image3.jpg"},
-            {"name": "Anele ", "role": "Role 4", "image_url": "url_to_image4.jpg"},
-            {"name": "Thabang Ntuli", "role": "Role 5", "image_url": "url_to_image5.jpg"},
-            {"name": "Nompumeza", "role": "Role 6", "image_url": "url_to_image6.jpg"}
+            {"name": "Jean Rabothata", "role": "Role 3", "image_url": "resources/imgs/download.jpeg"},
+            {"name": "Anele ", "role": "Role 4", "image_url": "resources/imgs/download.jpeg"},
+            {"name": "Thabang Ntuli", "role": "Role 5", "image_url": "resources/imgs/download.jpeg"},
+            {"name": "Nompumeza", "role": "Role 6", "image_url": "resources/imgs/download.jpeg"}
         ]
 
         # Create columns layout for displaying images and text
