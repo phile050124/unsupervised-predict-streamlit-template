@@ -105,7 +105,7 @@ def main():
     if page_selection == "Welcome":
         st.title("Welcome to your Movie Recommender App")
 
-        st.image('Imgs/movie_night1.jpg',width = 640)
+        st.image('resources/Imgs/movie_night1.jpg',width = 640)
 
         st.write("The aim for this application is to give users the ability to discover new movies based on their 3 favourite movies.")
 
@@ -131,7 +131,7 @@ def main():
                 
         st.subheader("**Unsupervised AE4**")
         
-        st.image("Imgs/group_member.png", use_column_width=True)
+        st.image("resources/Imgs/group_member.png", use_column_width=True)
         st.markdown("* Jean-Luc Van Zyl- Team Coordinator")
         st.markdown("* Pearl Matsane")
         st.markdown("* Lydia Lehutjo")
@@ -146,7 +146,7 @@ def main():
         source = st.sidebar.checkbox("Data Source")
         if source:
             st.subheader("Where did we get the data from?")
-            st.image('Imgs/download.jpg', use_column_width =False)
+            st.image('resources/Imgs/download.jpg', use_column_width =False)
             st.markdown("The data was obtained from the MovieLens \
             which has the several millions 5-star ratings obtained from users using the online recommendation system.\
             The IMBD (imbd_df) was legally scraped from IMDB.")
@@ -165,13 +165,13 @@ def main():
         user = st.sidebar.checkbox("User analysis")
         if user:
             st.subheader("Insights from users")
-            st.image('Imgs/user_analysis.png', width = 720)
+            st.image('resources/Imgs/user_analysis.png', width = 720)
             st.markdown("These graphs show the density plots of the average rating of users and the number of movies per user.\
                         What is observed that most of the users rated the movies an avg of 3.5 and most users watched less than 500 movies")
         movies = st.sidebar.checkbox("Movie analysis")
         if movies:
             st.subheader("Insights from Movies")
-            st.image('Imgs/wordcloud.png', use_column_width=False)
+            st.image('resources/Imgs/wordcloud.png', use_column_width=False)
             st.markdown("These are most common genres in the dataset!")
 
         st.sidebar.subheader("Modelling")
