@@ -117,18 +117,38 @@ def main():
             else:
                 st.write("No matching movies found.")
 
+
     elif page_selection == "Top Charts":
+
         st.title("Top Charts")
+
         # Load movie ratings data
+
         ratings_df = pd.read_csv('resources/data/ratings.csv')
+
+        # Load movie titles data
+
+        titlelist = load_movie_titles('resources/data/movies.csv')
+
+        # Merge ratings_df and title_list on 'movieId' column
+
+        merged_df = pd.merge(ratings_df, titlelist, on='movieId')
+
         # Calculate average rating for each movie
-        avg_ratings = ratings_df.groupby('movieId')['rating'].mean()
+
+        avg_ratings = merged_df.groupby('movieId')['rating'].mean()
+
         # Sort movies based on average rating
+
         top_movies = avg_ratings.sort_values(ascending=False).head(10)
+
         st.write("Top 10 Rated Movies:")
+
         for movie_id, rating in top_movies.items():
-            movie_title = title_list[movie_id]
+            movie_title = merged_df.loc[merged_df['movieId'] == movie_id, 'title'].iloc[0]
+
             st.write(f"{movie_title}: {rating:.2f}")
+
 
     elif page_selection == "User Profile":
         st.title("User Profile")
